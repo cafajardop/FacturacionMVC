@@ -22,6 +22,5 @@ namespace _01_Dal.Entidades
         public int Cantidad { get; set; }
         public int ValUnitario { get; set; }
         public int Total { get; set; }
-
     }
 }
