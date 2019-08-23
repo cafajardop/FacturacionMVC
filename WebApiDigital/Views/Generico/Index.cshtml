@@ -1,0 +1,754 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+<script>
+    function valida(e) {
+        tecla = (document.all) ? e.keyCode : e.which;
+        //Tecla de retroceso para borrar, siempre la permite
+        if (tecla == 8) {
+            return true;
+        }
+        // Patron de entrada, en este caso solo acepta numeros
+        patron = /[0-9]/;
+        tecla_final = String.fromCharCode(tecla);
+        return patron.test(tecla_final);
+    }
+    function mayus(e) {
+        e.value = e.value.toLowerCase();
+    }
+
+
+    function soloLetras(e) {
+        key = e.keyCode || e.which;
+        tecla = String.fromCharCode(key).toLowerCase();
+        letras = " áéíóúabcdefghijklmnñopqrstuvwxyz";
+        especiales = "8-37-39-46";
+
+        tecla_especial = false
+        for (var i in especiales) {
+            if (key == especiales[i]) {
+                tecla_especial = true;
+                break;
+            }
+        }
+
+        if (letras.indexOf(tecla) == -1 && !tecla_especial) {
+            return false;
+        }
+    }
+</script>
+
+
+<div ng-controller="UsuarioController" class="row">
+    <div class="container">
+        <div class="row">
+            <h2>Prueba Digital Ware</h2>
+            <div growl></div>
+            <div class="panel-group" id="accordion">
+                <!--Panel Crear Categorias-->
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h6 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Crear Categoria</a>
+                        </h6>
+                    </div>
+                    <div id="collapse1" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-3">
+                                    <label for="inlineFormInputGroup">Cree una nueva Categoria</label>
+                                    <div class="input-group ">
+                                        <div class="input-group-addon"><i class="fa fa-id-card" aria-hidden="true"></i></div>
+                                        <input type="text" ng-model="categoria" class="form-control" id="inlineFormInputGroup" placeholder="Categoria" onkeyup="mayus(this)" onkeypress="return soloLetras(event)">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label for="inlineFormInputGroup">Editar Categoria</label>
+                                    <div class="input-group ">
+                                        <button class="btn btn-primary btn-sm" ng-click="CargarComboTipCategoria()" type="button" title="Ver Caso" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-eye"></i></button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-lg-8"></div>
+                                <div class="col-lg-2">
+                                    <button type="button" ng-click="InsertarCategoria()" class="btn btn-primary"> <i class="fa fa-save" aria-hidden="true"></i> &nbsp; Crear Categoria </button>
+                                </div>
+                                <div class="col-lg-2">
+                                    <button class="btn btn-default  pull-right" onclick="location.reload()" type="button"><i class="fa fa-recycle" aria-hidden="true"></i>&nbsp;Limpiar Pantalla</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Panel Crear Productos-->
+                <div class="panel panel-warning">
+                    <div class="panel-heading">
+                        <h6 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Crear Productos</a>
+                        </h6>
+                    </div>
+                    <div id="collapse2" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-3">
+                                    <label for="inlineFormInputGroup">Seleccione Categoria</label>
+                                    <select id="Bd" ng-model="tipoCategoria" ng-change="" class="form-control"
+                                            ng-options="item.idCategoria as item.nombreCategoria for item  in TiposCategoria " required>
+                                        <option value="">Seleccione</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label for="inlineFormInputGroup">Nombre Producto</label>
+                                    <div class="input-group ">
+                                        <div class="input-group-addon"><i class="fa fa-shopping-cart" aria-hidden="true"></i></div>
+                                        <input type="text" ng-model="NombreProducto" class="form-control" id="inlineFormInputGroup" placeholder="Nombre Producto" onkeyup="mayus(this)" onkeypress="return soloLetras(event)">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label for="inlineFormInputGroup">Descripción Producto</label>
+                                    <div class="input-group ">
+                                        <div class="input-group-addon"><i class="fa fa-id-card" aria-hidden="true"></i></div>
+                                        <input type="text" ng-model="DesProducto" class="form-control" id="inlineFormInputGroup" placeholder="Descripción" onkeyup="mayus(this)">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label for="inlineFormInputGroup">Stock</label>
+                                    <div class="input-group ">
+                                        <div class="input-group-addon"><i class="fa fa-stack-overflow " aria-hidden="true"></i></div>
+                                        <input type="text" ng-model="StokProducto" class="form-control" id="inlineFormInputGroup" placeholder="Stock" onkeypress="return valida(event)">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-3">
+                                    <label for="inlineFormInputGroup">Precio de Compra</label>
+                                    <div class="input-group ">
+                                        <div class="input-group-addon"><i class="fa fa-money" aria-hidden="true"></i></div>
+                                        <input type="text" ng-model="PrecioCompra" class="form-control" id="inlineFormInputGroup" placeholder="Precio de compra" onkeypress="return valida(event)">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label for="inlineFormInputGroup">Precio de Venta</label>
+                                    <div class="input-group ">
+                                        <div class="input-group-addon"><i class="fa fa-money" aria-hidden="true"></i></div>
+                                        <input type="text" ng-model="PrecioVenta" class="form-control" id="inlineFormInputGroup" placeholder="Precio de venta" onkeypress="return valida(event)">
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label for="inlineFormInputGroup">Lista de Precios productos</label>
+                                    <div class="input-group ">
+                                        <button type="button" ng-click="TraerListaProductos()" class="btn btn-success" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"> <i class="fa fa-search" aria-hidden="true"></i> &nbsp; Lista Precios 2019 </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <div class="collapse" id="collapseExample">
+                                    <div class="col-lg-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Categoria</th>
+                                                        <th>Producto</th>
+                                                        <th>Stock</th>
+                                                        <th>Precio de Compra</th>
+                                                        <th>Precio de Venta</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="item in authobj2">
+                                                        <td>{{item.NombreCategoria}}</td>
+                                                        <td>{{item.Nombre}}</td>
+                                                        <td>{{item.stock}}</td>
+                                                        <td>{{item.precio_compra}}</td>
+                                                        <td>{{item.precio_venta}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label for="inlineFormInputGroup">Productos en stock minimo permitido (5)</label>
+                                    <div class="input-group ">
+                                        <button type="button" ng-click="TraerListaProductosMin()" class="btn btn-success" data-toggle="collapse" href="#collapseExample1" role="button" aria-expanded="false" aria-controls="collapseExample1"> <i class="fa fa-search" aria-hidden="true"></i> &nbsp; Consulta stock minimo </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <div class="collapse" id="collapseExample1">
+                                    <div class="col-lg-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Categoria</th>
+                                                        <th>Producto</th>
+                                                        <th>Stock</th>
+                                                        <th>Precio de Compra</th>
+                                                        <th>Precio de Venta</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="item in authobj3">
+                                                        <td>{{item.NombreCategoria}}</td>
+                                                        <td>{{item.Nombre}}</td>
+                                                        <td>{{item.stock}}</td>
+                                                        <td>{{item.precio_compra}}</td>
+                                                        <td>{{item.precio_venta}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-lg-8"></div>
+                                <div class="col-lg-2">
+                                    <button type="button" ng-click="InsertarProducto()" class="btn btn-primary"> <i class="fa fa-save" aria-hidden="true"></i> &nbsp; Crear Productos </button>
+                                </div>
+                                <div class="col-lg-2">
+                                    <button class="btn btn-default  pull-right" onclick="location.reload()" type="button"><i class="fa fa-recycle" aria-hidden="true"></i>&nbsp;Limpiar Pantalla</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!--Panel Crear Factura-->
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <h6 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Generar Factura</a>
+                        </h6>
+                    </div>
+                    <div id="collapse3" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="row" ng-if="RespuestaFactura==true">
+                                <div class="col-lg-10">
+                                    <label for="inlineFormInputGroup">No.Factura Generada :<h5>{{ResFactura}}</h5></label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-3">
+                                    <label class="" for="Bd">Tip Documento(*)</label>
+                                    <select id="Bd" ng-model="tipodocUpd" ng-change="CambioDocumento()" class="form-control"
+                                            ng-options="item.IdTip as item.Descripcion for item  in TiposDoc " required>
+                                        <option value="">Seleccione</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label for="inlineFormInputGroup">Numero Documento(*)</label>
+                                    <div class="input-group ">
+                                        <div class="input-group-addon"><i class="fa fa-id-card" aria-hidden="true"></i></div>
+                                        <input type="text" ng-model="documentoFac" class="form-control" id="inlineFormInputGroup" placeholder="Cedula" onkeypress="return valida(event)">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label for="inlineFormInputGroup">Nombres</label>
+                                    <div class="input-group ">
+                                        <div class="input-group-addon"><i class="fa fa-id-card" aria-hidden="true"></i></div>
+                                        <input type="text" ng-model="Nombres" class="form-control" id="inlineFormInputGroup" onkeyup="mayus(this)">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label for="inlineFormInputGroup">Apellidos</label>
+                                    <div class="input-group ">
+                                        <div class="input-group-addon"><i class="fa fa-id-card" aria-hidden="true"></i></div>
+                                        <input type="text" ng-model="Apellidos" class="form-control" id="inlineFormInputGroup" onkeyup="mayus(this)">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-3">
+                                    <label for="inlineFormInputGroup">Fecha Nacimiento</label>
+                                    <div class="input-group ">
+                                        <div class="input-group-addon"><i class="fa fa-id-card" aria-hidden="true"></i></div>
+                                        <input type="date" ng-model="FchNacimiento" class="form-control" id="inlineFormInputGroup" onkeyup="mayus(this)">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label for="inlineFormInputGroup">Direccion</label>
+                                    <div class="input-group ">
+                                        <div class="input-group-addon"><i class="fa fa-id-card" aria-hidden="true"></i></div>
+                                        <input type="text" ng-model="direccion" class="form-control" id="inlineFormInputGroup" onkeyup="mayus(this)">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label for="inlineFormInputGroup">Telefono</label>
+                                    <div class="input-group ">
+                                        <div class="input-group-addon"><i class="fa fa-id-card" aria-hidden="true"></i></div>
+                                        <input type="text" ng-model="telefono" class="form-control" id="inlineFormInputGroup" onkeyup="mayus(this)">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label class="" for="Bd">Tipo Producto</label>
+                                    <select id="Bd" ng-model="tipoProducto" ng-change="GetValorProducto()" class="form-control"
+                                            ng-options="item.ProductoId as item.DesNombreProducto for item  in TiposProd " required>
+                                        <option value="">Seleccione</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-3">
+                                    <label class="" for="Bd">Cantidad</label>
+                                    <div class="input-group ">
+                                        <div class="input-group-addon"><i class="fa fa-id-card" aria-hidden="true"></i></div>
+                                        <input type="number" ng-model="cantidad" class="form-control" id="inlineFormInputGroup">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label class="" for="Bd">Valor Unitario</label>
+                                    <div class="input-group ">
+                                        <div class="input-group-addon"><i class="fa fa-id-card" aria-hidden="true"></i></div>
+                                        <input type="text" ng-model="valor" readonly class="form-control" id="inlineFormInputGroup">
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <div class="col-lg-3">
+                                    <div class="input-group">
+                                        <label class="" for="Bd">Consultar Factura</label> <br />
+                                        <button class="btn btn-primary btn-sm" type="button" title="Consultar Factura" data-toggle="modal" data-target="#exampleModal1"><i class="fa fa-eye"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-lg-8"></div>
+                                <div class="col-lg-2">
+                                    <button type="button" ng-click="GenerarFactura()" class="btn btn-info"> <i class="fa fa-save" aria-hidden="true"></i> &nbsp; Generar Factura  </button>
+                                </div>
+                                <div class="col-lg-2">
+                                    <button class="btn btn-default  pull-right" onclick="location.reload()" type="button"><i class="fa fa-recycle" aria-hidden="true"></i>&nbsp;Limpiar Pantalla</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Obtener valor total -->
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h6 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse5">Obtener valor total vendido por cada producto</a>
+                        </h6>
+                    </div>
+                    <div id="collapse5" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h4 class="center">Consulta Ventas y Facturas</h4>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label for="inlineFormInputGroup">Valor Total Vendido</label>
+                                    <div class="input-group ">
+                                        <div class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></div>
+                                        <input type="date" ng-model="FchTotalVendidos" class="form-control" id="inlineFormInputGroup" onkeyup="mayus(this)">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label for="inlineFormInputGroup">Valor total por Año</label>
+                                    <div class="input-group ">
+                                        @*<button type="button" ng-click="TraerTotalVentas()" class="btn btn-success" role="button" aria-controls="collapseExample5"> <i class="fa fa-search" aria-hidden="true"></i> &nbsp; Buscar Por año</button>*@
+                                        <button type="button" ng-click="TraerTotalVentas()" class="btn btn-danger"> <i class="fa fa-save" aria-hidden="true"></i> &nbsp; Buscar Por año  </button>
+                                    </div>
+                                </div>
+                                <hr />
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nombre</th>
+                                                    <th>Cantidad</th>
+                                                    <th>Total Venta</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="item5 in authobj5">
+                                                    <td>{{item5.Nombre}}</td>
+                                                    <td>{{item5.Cantidad}}</td>
+                                                    <td>{{item5.TotalVenta}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-lg-8"></div>
+                                <div class="col-lg-2">
+                                    <button class="btn btn-default  pull-right" onclick="location.reload()" type="button"><i class="fa fa-recycle" aria-hidden="true"></i>&nbsp;Limpiar Pantalla</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Lista de clientes no mayor a 35 años-->
+                <div class="panel panel-danger">
+                    <div class="panel-heading">
+                        <h6 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Lista clientes no mayores a 35 años</a>
+                        </h6>
+                    </div>
+                    <div id="collapse4" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-3">
+                                    <label for="inlineFormInputGroup">Fecha Inicial de Factura</label>
+                                    <div class="input-group ">
+                                        <div class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></div>
+                                        <input type="date" ng-model="fchIni" class="form-control" id="inlineFormInputGroup" placeholder="Cedula" onkeypress="return valida(event)">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label for="inlineFormInputGroup">Fecha Final de Factura</label>
+                                    <div class="input-group ">
+                                        <div class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></div>
+                                        <input type="date" ng-model="fchFin" class="form-control" id="inlineFormInputGroup" placeholder="Cedula" onkeypress="return valida(event)">
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row" ng-if="TablaNoMayor==true">
+                                <div class="collapse" id="collapseExample3">
+                                    <div class="col-lg-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>No.Factura</th>
+                                                        <th>Fecha de Venta</th>
+                                                        <th>Numero Documento</th>
+                                                        <th>Nombres</th>
+                                                        <th>Apellidos</th>
+                                                        <th>Edad</th>
+                                                        <th>Direccion</th>
+                                                        <th>Telefono</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="item2 in authobj4">
+                                                        <td>{{item2.NroFacturaId}}</td>
+                                                        <td>{{item2.FchaVenta}}</td>
+                                                        <td>{{item2.numDocumento}}</td>
+                                                        <td>{{item2.nombres}}</td>
+                                                        <td>{{item2.apellidos}}</td>
+                                                        <td>{{item2.Edad}}</td>
+                                                        <td>{{item2.direccion}}</td>
+                                                        <td>{{item2.telefono}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-lg-8"></div>
+                                <div class="col-lg-2">
+                                    @*<button type="button" ng-click="BorraUsr()" class="btn btn-primary"> <i class="fa fa-search" aria-hidden="true"></i> &nbsp; buscar  </button>*@
+                                    <button type="button" ng-click="TraerUsuarioNoMayores()" class="btn btn-success" data-toggle="collapse" href="#collapseExample3" role="button" aria-expanded="false" aria-controls="collapseExample3"> <i class="fa fa-search" aria-hidden="true"></i> &nbsp; Buscar </button>
+                                </div>
+                                <div class="col-lg-2">
+                                    <button class="btn btn-default  pull-right" onclick="location.reload()" type="button"><i class="fa fa-recycle" aria-hidden="true"></i>&nbsp;Limpiar Pantalla</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!--Lista de clientes fecha de compra-->
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h6 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse6">Ultima fecha de compra de un cliente</a>
+                        </h6>
+                    </div>
+                    <div id="collapse6" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label for="inlineFormInputGroup">Ultima Fecha de compra de un cliente</label>
+                                    <div class="input-group ">
+                                        <button type="button" ng-click="TraerListaUltimaCompra()" class="btn btn-success" data-toggle="collapse" href="#collapseExample6" role="button" aria-expanded="false" aria-controls="collapseExample6"> <i class="fa fa-search" aria-hidden="true"></i> &nbsp; Consulta Clientes </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <div class="collapse" id="collapseExample6">
+                                    <div class="col-lg-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Numero Documento</th>
+                                                        <th>Nombres</th>
+                                                        <th>Apellidos</th>
+                                                        <th>Dias</th>
+                                                        <th>Ultima Fecha de Compra</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="item6 in authobj6">
+                                                        <td>{{item6.numDocumento}}</td>
+                                                        <td>{{item6.nombres}}</td>
+                                                        <td>{{item6.apellidos}}</td>
+                                                        <td>{{item6.Dias}}</td>
+                                                        <td>{{item6.UltimaFechaCompra}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-lg-8"></div>
+                                <div class="col-lg-2">
+                                    <button class="btn btn-default  pull-right" onclick="location.reload()" type="button"><i class="fa fa-recycle" aria-hidden="true"></i>&nbsp;Limpiar Pantalla</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!--Conceptos de programacion orientada a objetos-->
+                <div class="panel panel-warning">
+                    <div class="panel-heading">
+                        <h6 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse7">Conceptos de programacion orientada a objetos</a>
+                        </h6>
+                    </div>
+                    <div id="collapse7" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="col-lg-3">
+                                <label for="inlineFormInputGroup">Ver</label>
+                                <div class="input-group ">
+                                    <button class="btn btn-primary btn-sm" ng-click="CargarComboTipCategoria()" type="button" title="Ver Caso" data-toggle="modal" data-target="#exampleModal2"><i class="fa fa-eye"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-lg-8"></div>
+                                <div class="col-lg-2">
+                                    <button class="btn btn-default  pull-right" onclick="location.reload()" type="button"><i class="fa fa-recycle" aria-hidden="true"></i>&nbsp;Limpiar Pantalla</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- Modal Categorias-->
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="exampleModalLabel">Actualizar Categoria </h4> <p><span style="color: #ed1b24">Recuerde llenar los campos obligatorios(*)</span></p>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <label for="inlineFormInputGroup">Categoria Actual(*)</label>
+                                                <select id="Bd" ng-model="tipoCategoria" ng-change="" class="form-control"
+                                                        ng-options="item.idCategoria as item.nombreCategoria for item  in TiposCategoria " required>
+                                                    <option value="">Seleccione</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <label for="inlineFormInputGroup">Nueva Categoria(*)</label>
+                                                <div class="input-group ">
+                                                    <div class="input-group-addon"><i class="fa fa-id-card" aria-hidden="true"></i></div>
+                                                    <input type="text" ng-model="NuevaCategoria" class="form-control" id="inlineFormInputGroup" onkeyup="mayus(this)" onkeypress="return soloLetras(event)">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="button" class="btn btn-primary" ng-click="ActualizaCategoria()">Actualizar Categoria</button>
+                                <button type="button" class="btn btn-danger" ng-click="EliminaCategoria()">Eliminar Categoria</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal Mostrar Factura-->
+                <div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="exampleModalLabel">Consultar Factura </h4> <p><span style="color: #ed1b24">Recuerde llenar los campos obligatorios(*)</span></p>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <label for="inlineFormInputGroup">Ingrese No.Factura (*)</label>
+                                                <div class="input-group ">
+                                                    <div class="input-group-addon"><i class="fa fa-arrow-circle-right" aria-hidden="true"></i></div>
+                                                    <input type="text" ng-model="NoFactura" class="form-control" id="inlineFormInputGroup" onkeypress="return valida(event)">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <label for="inlineFormInputGroup">Buscar</label>
+                                                <div class="input-group">
+                                                    @*<button type="button" class="btn btn-primary" ng-click="ActualizaCategoria()">Buscar</button>*@
+                                                    <button type="button" ng-click="ConsultarFactura()" class="btn btn-primary" data-toggle="collapse" href="#collapseExample8" role="button" aria-expanded="false" aria-controls="collapseExample8"> <i class="fa fa-search" aria-hidden="true"></i> &nbsp; Buscar Factura</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-if="tablaFactura==true">
+                                            <div class="collapse" id="collapseExample8">
+                                                <div class="col-lg-12">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>No.Factura</th>
+                                                                    <th>CC</th>
+                                                                    <th>Nombres</th>
+                                                                    <th>Apellidos</th>
+                                                                    <th>Edad</th>
+                                                                    <th>Direccion</th>
+                                                                    <th>Tel</th>
+                                                                    <th>Fecha</th>
+                                                                    <th>Producto</th>
+                                                                    <th>Cantidad</th>
+                                                                    <th>Precio</th>
+                                                                    <th>Total</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr ng-repeat="item8 in authobj8">
+                                                                    <td>{{item8.NroFacturaId}}</td>
+                                                                    <td>{{item8.numDocumento}}</td>
+                                                                    <td>{{item8.nombres}}</td>
+                                                                    <td>{{item8.apellidos}}</td>
+                                                                    <td>{{item8.Edad}}</td>
+                                                                    <td>{{item8.direccion}}</td>
+                                                                    <td>{{item8.telefono}}</td>
+                                                                    <td>{{item8.FchaVenta}}</td>
+                                                                    <td>{{item8.Nombre}}</td>
+                                                                    <td>{{item8.Cantidad}}</td>
+                                                                    <td>{{item8.ValUnitario}}</td>
+                                                                    <td>{{item8.Total}}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" onclick="location.reload()" data-dismiss="modal">Cerrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal Conceptos basicos de programacion-->
+                <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">Programacion orientada a objetos</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <label class="" for="Bd">Defina que es una clase</label>
+                                        <p>
+                                            Una clase es una especie de plantilla que nos sirve para crear objetos de forma predefinida, sirven
+                                            para representar conceptos o entidades por ejemplo la clase usuario.
+                                        </p>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <label class="" for="Bd">Defina que un objeto</label>
+                                        <p>
+                                            Un objeto es una entidad que tiene caracteristicas que lo hace diferente a otros y este puede realizar
+                                            diferentes acciones.
+                                        </p>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <label class="" for="Bd">Defina que Herencia</label>
+                                        <p>
+                                            Herencia es donde una clase nueva se crea a partir de una clase existente la cual se denomina subclase en donde
+                                            contiene atributos y metodos de la clase primaria.
+                                        </p>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <label class="" for="Bd">Defina que Polimorfismo</label>
+                                        <p>
+                                            Es la capacidad que tienen los objetos de una clase de responder al mismo mensaje o evento en función de los parámetros
+                                            utilizados durantes su derivacion.
+                                        </p>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <label class="" for="Bd">Defina los principios SOLID</label>
+                                        <p>
+                                            S (SRP) – Principio de responsabilidad única (Single responsibility principle)<br />
+                                            O (OCP) – Principio de abierto/cerrado (Open/closed principle)<br />
+                                            L (LSP) – Principio de sustitución de Liskov (Liskov substitution principle)<br />
+                                            I (ISP) – Principio de segregación de la interfaz  (Interface segregation principle)<br />
+                                            D (DIP) – Principio de inversión de la dependencia (Dependency inversion principle)<br />
+                                            <hr />
+
+                                            <cite> Tomado de https://apiumhub.com/es/tech-blog-barcelona/principios-solid/</cite>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
